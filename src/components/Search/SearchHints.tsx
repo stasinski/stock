@@ -16,8 +16,8 @@ const useStyle = makeStyles({
 });
 
 const SearchHints: React.FC<Props> = ({ searchValue }) => {
-  const searchStock = useSelector(
-    (state: RootState) => state.search.searchStock
+  const { searchStock, isFetching } = useSelector(
+    (state: RootState) => state.search
   );
   const dispatch = useDispatch();
   const style = useStyle();
@@ -29,11 +29,17 @@ const SearchHints: React.FC<Props> = ({ searchValue }) => {
     dispatch(setSearchStock({ searchValue: "tesla" }));
   }, [searchValue, dispatch]);
 
+  let content: any = <h2>Loading...</h2>;
+
+  if (!isFetching) {
+    content = searchStock.map((stock) => (
+      <SingleHint stock={stock} key={stock.symbol} />
+    ));
+  }
+
   return (
     <Grid container className={style.wrapper} justify="center">
-      {searchStock.map((stock) => (
-        <SingleHint stock={stock} key={stock.symbol} />
-      ))}
+      {content}
     </Grid>
   );
 };
