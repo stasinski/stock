@@ -4,17 +4,25 @@ import { SET_SEARCHSTOCKS, setSearchStockAsync } from "./searchManager";
 
 export function* fetchSearchStockAsync({ payload: { searchValue } }: any) {
   try {
-    console.log(searchValue);
-    yield put(setSearchStockAsync({ bestMatches: [] }));
+    const { data } = yield stockApi.get("", {
+      params: {
+        function: "SYMBOL_SEARCH",
+        keywords: searchValue,
+      },
+    });
+    data.bestMatches = data.bestMatches.map(
+      (obj: { [key: string]: string }) => {
+        const newObj: { [key: string]: string } = {};
+        for (let key in obj) {
+          newObj[key.slice(3)] = obj[key];
+        }
+        return newObj;
+      }
+    );
+    yield put(setSearchStockAsync(data));
   } catch (error) {
     console.log(error);
   }
-  // const { data } = await stockApi.get("", {
-  //   params: {
-  //     function: "SYMBOL_SEARCH",
-  //     keywords: searchValue,
-  //   },
-  // });
 }
 
 export function* watchFetchSearchStockAsync() {
