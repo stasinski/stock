@@ -1,8 +1,9 @@
 import createSagaMiddleware from "redux-saga";
 import { applyMiddleware, combineReducers, createStore } from "redux";
+import { composeWithDevTools } from "redux-devtools-extension";
+import { all } from "@redux-saga/core/effects";
 
 import { searchReducer } from "./search/searchReducer";
-import { all } from "@redux-saga/core/effects";
 import { watchFetchSearchStockAsync } from "./search/saga";
 
 const rootReducer = combineReducers({
@@ -15,7 +16,10 @@ export default function* rootSaga() {
 
 const sagaMiddleware = createSagaMiddleware();
 
-export const store = createStore(rootReducer, applyMiddleware(sagaMiddleware));
+export const store = createStore(
+  rootReducer,
+  composeWithDevTools(applyMiddleware(sagaMiddleware))
+);
 
 sagaMiddleware.run(rootSaga);
 
